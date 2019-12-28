@@ -1,0 +1,27 @@
+sudo: false
+
+language: rust
+rust: stable
+
+cache: cargo
+
+before_script:
+  - openssl aes-256-cbc -K $ENCRYPTION_KEY -iv $ENCRYPTION_IV -in deploy_key.enc -out ./deploy_key -d
+  - chmod 600 ./deploy_key
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+  - eval $(ssh-agent -s)
+  - ssh-add ./deploy_key  
+  - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -f
+
+script:
+  - wasm-pack build --release --target web --out-dir dist
+  - cd dist
+  - rm .gitignore
+  - git init
+  - git checkout --orphan gh-pages
+  - git add .
+  - git config user.name "Travis CI"
+  - git config user.email "travisci@localhost"
+  - git commit -m "gh-pages"
+  - git remote add origin git@github.com:Zireael-N/wasm-json-parse.git
+  - git push -f -u origin gh-pages
