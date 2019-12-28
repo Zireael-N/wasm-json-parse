@@ -6,11 +6,9 @@ rust: stable
 cache: cargo
 
 before_script:
-  - openssl aes-256-cbc -K $ENCRYPTION_KEY -iv $ENCRYPTION_IV -in deploy_key.enc -out ./deploy_key -d
-  - chmod 600 ./deploy_key
   - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   - eval $(ssh-agent -s)
-  - ssh-add ./deploy_key  
+  - echo "${SSH_KEY_HEX}" | xxd -r -p | ssh-add -  
   - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -f
 
 script:
