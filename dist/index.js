@@ -25,7 +25,7 @@ const measure = (cb, id) => {
     el.innerText = '-';
 };
 
-const sendRequest = (e) => {
+const sendRequest = async (e) => {
     if (e && e.preventDefault) {
         e.preventDefault();
     }
@@ -40,49 +40,59 @@ const sendRequest = (e) => {
     url.disabled = true;
     button.disabled = true;
 
-    fetch(url.value)
-        .then(r => {
-            if (r.status >= 400 && r.status <= 599) {
-                throw new Error(`Server returned ${r.status}`);
-            }
+    try {
+        let resp = await fetch(url.value);
+        if (resp.status >= 400 && resp.status <= 599) {
+            throw new Error(`Server returned ${resp.status}`);
+        }
 
-            const contentType = r.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error('Invalid Content-Type');
-            }
+        const contentType = resp.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Invalid Content-Type');
+        }
 
-            return r.text();
-        })
-        .then(r => {
-            measure(() => JSON.parse(r), 'native');
+        const blob = await resp.blob()
 
-            measure(() => parse_json(r), 'untyped');
+        const buffer = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onabort = reject;
+            reader.onerror = reject;
+            reader.onloadend = e => resolve(e.target.result);
+            reader.readAsArrayBuffer(blob);
+        });
 
-            measure(() => parse_json_typed(r), 'typed');
-
-            let ptr;
-            measure(() => ptr = allocate_buffer(r.length), 'alloc');
-
-            measure(() => {
-                const buffer = new Uint8Array(memory.buffer, ptr, r.length);
-                const encoder = new TextEncoder();
-                return encoder.encodeInto(r, buffer);
-            }, 'move');
-
-            measure(parse_json_move, 'untyped-move');
-
-            measure(parse_json_move_typed, 'typed-move');
-        })
-        .catch((e) => {
-            document.querySelectorAll('.table td:last-child').forEach(el => el.innerText = '-');
-            throw e;
-        })
-        .finally(() => {
-            url.disabled = false;
-            button.disabled = false;
-        })
-
+        parseString(new TextDecoder('utf-8').decode(buffer));
+        parseBuffer(buffer);
+    } catch(e) {
+        document.querySelectorAll('.table td:last-child').forEach(el => el.innerText = '-');
+        throw e;
+    } finally {
+        url.disabled = false;
+        button.disabled = false;
+    }
     return false;
+}
+
+const parseString = str => {
+    measure(() => JSON.parse(str), 'native');
+
+    measure(() => parse_json(str), 'untyped');
+
+    measure(() => parse_json_typed(str), 'typed');
+}
+
+const parseBuffer = buf => {
+    let ptr;
+    measure(() => ptr = allocate_buffer(buf.byteLength), 'alloc');
+
+    measure(() => {
+        new Uint8Array(memory.buffer, ptr, buf.byteLength).set(buf);
+        return !0;
+    }, 'move');
+
+    measure(parse_json_move, 'untyped-move');
+
+    measure(parse_json_move_typed, 'typed-move');
 }
 
 init().then(module => {
