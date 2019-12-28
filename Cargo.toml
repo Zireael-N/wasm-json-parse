@@ -1,0 +1,25 @@
+[package]
+name = "wasm-json-parse"
+version = "0.1.0"
+authors = ["Zireael-N <13710677+Zireael-N@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+lto = true
+
+[dependencies]
+serde_derive = "1.0.104"
+serde_json = "1.0.44"
+# wee_alloc = "0.4.5"
+
+[dependencies.wasm-bindgen]
+version = "0.2.55"
+# features = ["serde-serialize"]
+
+[dependencies.serde]
+version = "1.0.104"
+features = ["derive"]

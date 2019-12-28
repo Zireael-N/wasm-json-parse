@@ -1,0 +1,10 @@
+/dist/**/*
+!/dist/index.html
+!/dist/index.js
+!/dist/data
+!/dist/data/**/*.json
+
+deploy_key
+/target
+**/*.rs.bk
+Cargo.lock
