@@ -47,7 +47,7 @@ const sendRequest = (e) => {
             }
 
             const contentType = r.headers.get('content-type');
-            if (!contentType || contentType !== 'application/json') {
+            if (!contentType || !contentType.includes('application/json')) {
                 throw new Error('Invalid Content-Type');
             }
 
