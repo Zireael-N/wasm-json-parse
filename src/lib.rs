@@ -61,11 +61,20 @@ static mut DATA: Option<Vec<u8>> = None;
 #[wasm_bindgen]
 pub fn allocate_buffer(size: usize) -> *const u8 {
     unsafe {
-        DATA = None; // Dealloc old Vec
-
-        let mut v = Vec::with_capacity(size);
-        v.set_len(size);
-        DATA = Some(v);
+        if let Some(v) = &mut DATA {
+            let len = v.len();
+            if size > len {
+                v.reserve(size - len);
+                v.set_len(size);
+            } else if size < len {
+                v.set_len(size);
+                v.shrink_to_fit();
+            }
+        } else {
+            let mut v = Vec::with_capacity(size);
+            v.set_len(size);
+            DATA = Some(v);
+        }
         DATA.as_ref().unwrap().as_ptr()
     }
 }
