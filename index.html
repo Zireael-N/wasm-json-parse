@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="Description" content="Comparison of built-in JSON.parse() and serde-rs compiled to WASM.">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WASM JSON parsing</title>
+    <style type="text/css">
+        *{
+            padding:0;
+            margin:0;
+            box-sizing:content-box;
+        }
+        html, body{
+            width:100%;
+            height:100%;
+        }
+        body{
+            padding:16px;
+        }
+        .form{
+            display:flex;
+            width:calc(100% - 32px);
+            margin-bottom:16px;
+        }
+        .form-url{
+            flex:1 0 0;
+            font:16px monospace;
+        } 
+        .form-submit{
+            flex:0 0 0;
+            margin-left:8px;
+            font:16px sans-serif;
+            white-space:nowrap;
+        }
+        .table th,
+        .table td{
+            padding:2px;
+            font:16px monospace;
+            border:1px solid #000;
+        }
+        .table th{
+            font-weight:700;
+        }
+        .table td{
+            min-width:100px;
+        }
+        .table td:last-child{
+            text-align:right;
+        }
+    </style>
+    <script type="module" src="index.js"></script>
+    <script type="text/javascript" nomodule>
+        alert('Unfortunately, your browser does not support modules');
+    </script>
+</head>
+<body>
+    <form class="form" id="form">
+        <input class="form-url" id="url" type="text" value="./data/canada.json" aria-label="URL" disabled="disabled">
+        <button class="form-submit" id="submit" type="submit" disabled="disabled">Request data</button>
+    </form>
+    <table class="table">
+        <tr>
+            <th>Operation</th>
+            <th>Time spent (ms)</th>
+        </tr>
+        <tr>
+            <td>Native JSON.parse()</td>
+            <td id="native"></td>
+        </tr>
+        <tr>
+            <td>Untyped serde-rs</td>
+            <td id="untyped"></td>
+        </tr>
+        <tr>
+            <td>Typed serde-rs</td>
+            <td id="typed"></td>
+        </tr>
+        <tr>
+            <td>Allocating buffer</td>
+            <td id="alloc"></td>
+        </tr>
+        <tr>
+            <td>Moving data</td>
+            <td id="move"></td>
+        </tr>
+        <tr>
+            <td>Untyped serde-rs (move)</td>
+            <td id="untyped-move"></td>
+        </tr>
+        <tr>
+            <td>Typed serde-rs (move)</td>
+            <td id="typed-move"></td>
+        </tr>
+    </table>
+</body>
+</html>

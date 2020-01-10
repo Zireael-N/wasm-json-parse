@@ -1,0 +1,15 @@
+{
+  "name": "wasm-json-parse",
+  "collaborators": [
+    "Zireael-N <13710677+Zireael-N@users.noreply.github.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "wasm_json_parse_bg.wasm",
+    "wasm_json_parse.js",
+    "wasm_json_parse.d.ts"
+  ],
+  "module": "wasm_json_parse.js",
+  "types": "wasm_json_parse.d.ts",
+  "sideEffects": "false"
+}
