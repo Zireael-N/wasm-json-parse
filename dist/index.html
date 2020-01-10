@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="Description" content="Comparison of built-in JSON.parse() and serde-rs compiled to WASM.">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>WASM JSON parsing</title>
     <style type="text/css">
@@ -56,7 +57,7 @@
 </head>
 <body>
     <form class="form" id="form">
-        <input class="form-url" id="url" type="text" value="./data/canada.json" disabled="disabled">
+        <input class="form-url" id="url" type="text" value="./data/canada.json" aria-label="URL" disabled="disabled">
         <button class="form-submit" id="submit" type="submit" disabled="disabled">Request data</button>
     </form>
     <table class="table">
